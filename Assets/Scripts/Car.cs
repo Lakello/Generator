@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class Car : MonoBehaviour
+namespace Assets.Scripts
 {
-		
+    public class Car : MonoBehaviour
+    {
+    }
 }
