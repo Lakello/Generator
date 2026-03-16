@@ -1,20 +1,27 @@
+using System;
+using UnityEngine;
+
 namespace Generation
 {
-	using System;
-	using UnityEngine;
+    [Serializable]
+    public class Cell : IEquatable<Cell>
+    {
+        public Creature Creature;
+        public Vector3 Position;
 
-	[Serializable]
-	public class Cell : IEquatable<Cell>
-	{
-		public Creature Creature;
-		public Vector3 Position;
+        public bool Equals(Cell other)
+        {
+            return Equals(Creature, other.Creature);
+        }
 
-		public bool Equals(Cell other) =>
-			Equals(Creature, other.Creature);
+        public override bool Equals(object obj)
+        {
+            return obj is Cell other && Equals(other);
+        }
 
-		public override bool Equals(object obj) =>
-			obj is Cell other && Equals(other);
-
-		public override int GetHashCode() => Creature.GetHashCode();
-	}
+        public override int GetHashCode()
+        {
+            return Creature.GetHashCode();
+        }
+    }
 }
