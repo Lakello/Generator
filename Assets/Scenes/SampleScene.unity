@@ -362,9 +362,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c81eea9b7449a1b9c8cc66f9e751c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridSize: {x: 5, y: 5}
-  _cellSize: {x: 1, y: 1}
-  _gridSpacing: {x: 1, y: 1}
+  _grid:
+    _gridSize: {x: 5, y: 5}
+    _cellSize: {x: 1, y: 1}
+    _gridSpacing: {x: 1, y: 1}
+    _origin: {x: 0, y: 0}
   _cellPrefab: {fileID: 1659709762}
   _currentDirection: 0
   _startSize: 0

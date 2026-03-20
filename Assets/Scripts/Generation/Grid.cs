@@ -1,65 +1,85 @@
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts;
-using UnityEngine;
-
 namespace Generation
 {
-    public class Grid
-    {
-        public Grid(Vector2Int gridSize)
-        {
-            FillGrid(gridSize);
-            AttachNeighbors(gridSize);
-        }
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using Assets.Scripts;
+	using Sirenix.OdinInspector;
+	using UnityEngine;
 
-        public Dictionary<Vector2Int, Node> Nodes { get; } = new();
+	[BoxGroup("Grid")]
+	[HideLabel]
+	[Serializable]
+	public class Grid
+	{
+		[SerializeField] private Vector2Int _gridSize;
+		[SerializeField] private Vector2 _cellSize;
+		[SerializeField] private Vector2 _gridSpacing;
+		[SerializeField] private Vector2 _origin;
 
-        public bool TryGetNearestEmpty(out Node nearestEmpty)
-        {
-            nearestEmpty = Nodes.Values.FirstOrDefault(n => n.Cell.Creature == null);
+		public Dictionary<Vector2Int, Node> Nodes { get; } = new();
 
-            return nearestEmpty != null;
-        }
+		public void Generate()
+		{
+			FillGrid(_gridSize);
+			AttachNeighbors(_gridSize);
+		}
 
-        private void FillGrid(Vector2Int gridSize)
-        {
-            for (int i = 0; i < gridSize.x; i++)
-            {
-                for (int y = 0; y < gridSize.y; y++)
-                {
-                    Vector2Int coordinate = new(i, y);
-                    Nodes.Add(coordinate, new Node(coordinate));
-                }
-            }
-        }
+		public bool TryGetNearestEmpty(out Node nearestEmpty)
+		{
+			nearestEmpty = Nodes.Values.FirstOrDefault(n => n.Creature == null);
 
-        private void AttachNeighbors(Vector2Int gridSize)
-        {
-            foreach (Vector2Int coordinate in Nodes.Keys)
-            {
-                Node node = Nodes[coordinate];
+			return nearestEmpty != null;
+		}
 
-                if (coordinate.x - 1 > 0)
-                {
-                    node.Neighbors[Direction.Left] = Nodes[new(coordinate.x - 1, coordinate.y)];
-                }
+		private void FillGrid(Vector2Int gridSize)
+		{
+			for (int i = 0; i < gridSize.x; i++)
+			{
+				for (int y = 0; y < gridSize.y; y++)
+				{
+					Vector2Int coordinate = new(i, y);
+					Nodes.Add(coordinate, new Node(coordinate, GetWorldPosition(coordinate)));
+				}
+			}
+		}
 
-                if (coordinate.x + 1 < gridSize.x)
-                {
-                    node.Neighbors[Direction.Right] = Nodes[new(coordinate.x + 1, coordinate.y)];
-                }
+		private void AttachNeighbors(Vector2Int gridSize)
+		{
+			foreach (Vector2Int coordinate in Nodes.Keys)
+			{
+				Node node = Nodes[coordinate];
 
-                if (coordinate.y - 1 > 0)
-                {
-                    node.Neighbors[Direction.Down] = Nodes[new(coordinate.x, coordinate.y - 1)];
-                }
+				if (coordinate.x - 1 > 0)
+				{
+					node.Neighbors[Direction.Left] = Nodes[new(coordinate.x - 1, coordinate.y)];
+				}
 
-                if (coordinate.y + 1 < gridSize.y)
-                {
-                    node.Neighbors[Direction.Up] = Nodes[new(coordinate.x, coordinate.y + 1)];
-                }
-            }
-        }
-    }
+				if (coordinate.x + 1 < gridSize.x)
+				{
+					node.Neighbors[Direction.Right] = Nodes[new(coordinate.x + 1, coordinate.y)];
+				}
+
+				if (coordinate.y - 1 > 0)
+				{
+					node.Neighbors[Direction.Down] = Nodes[new(coordinate.x, coordinate.y - 1)];
+				}
+
+				if (coordinate.y + 1 < gridSize.y)
+				{
+					node.Neighbors[Direction.Up] = Nodes[new(coordinate.x, coordinate.y + 1)];
+				}
+			}
+		}
+
+		private Vector3 GetWorldPosition(Vector2Int coord)
+		{
+			float stepX = _cellSize.x + _gridSpacing.x;
+			float stepY = _cellSize.y + _gridSpacing.y;
+
+			float px = _origin.x + coord.x * stepX;
+			float py = _origin.y + coord.y * stepY;
+			return new Vector3(px, 0, py);
+		}
+	}
 }

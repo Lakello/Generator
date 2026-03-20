@@ -9,7 +9,7 @@ namespace Generation
     {
         public Size Size;
         public Direction Direction;
-        public List<Cell> UsedCells;
+        public List<Node> UsedCells;
         public Node OriginNode;
 
         public void InvertDirection()
