@@ -16,7 +16,8 @@ namespace Generation
 		[SerializeField] private Vector2 _cellSize;
 		[SerializeField] private Vector2 _gridSpacing;
 		[SerializeField] private Vector2 _origin;
-
+		[SerializeField] private Node[] _nodes;
+		
 		public Dictionary<Vector2Int, Node> Nodes { get; } = new();
 
 		public void Generate()
@@ -42,6 +43,8 @@ namespace Generation
 					Nodes.Add(coordinate, new Node(coordinate, GetWorldPosition(coordinate)));
 				}
 			}
+			
+			_nodes = Nodes.Values.ToArray();
 		}
 
 		private void AttachNeighbors(Vector2Int gridSize)
@@ -50,24 +53,24 @@ namespace Generation
 			{
 				Node node = Nodes[coordinate];
 
-				if (coordinate.x - 1 > 0)
+				if (coordinate.x - 1 >= 0)
 				{
-					node.Neighbors[Direction.Left] = Nodes[new(coordinate.x - 1, coordinate.y)];
+					node.Neighbors[CreatureDirection.Left] = Nodes[new(coordinate.x - 1, coordinate.y)];
 				}
 
 				if (coordinate.x + 1 < gridSize.x)
 				{
-					node.Neighbors[Direction.Right] = Nodes[new(coordinate.x + 1, coordinate.y)];
+					node.Neighbors[CreatureDirection.Right] = Nodes[new(coordinate.x + 1, coordinate.y)];
 				}
 
-				if (coordinate.y - 1 > 0)
+				if (coordinate.y - 1 >= 0)
 				{
-					node.Neighbors[Direction.Down] = Nodes[new(coordinate.x, coordinate.y - 1)];
+					node.Neighbors[CreatureDirection.Down] = Nodes[new(coordinate.x, coordinate.y - 1)];
 				}
 
 				if (coordinate.y + 1 < gridSize.y)
 				{
-					node.Neighbors[Direction.Up] = Nodes[new(coordinate.x, coordinate.y + 1)];
+					node.Neighbors[CreatureDirection.Up] = Nodes[new(coordinate.x, coordinate.y + 1)];
 				}
 			}
 		}

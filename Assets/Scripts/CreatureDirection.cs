@@ -1,6 +1,6 @@
 namespace Assets.Scripts
 {
-    public enum Direction
+    public enum CreatureDirection
     {
         None = -1,
         Up = 0,

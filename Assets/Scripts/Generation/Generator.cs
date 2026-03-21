@@ -1,8 +1,11 @@
 namespace Generation
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 	using Assets.Scripts;
 	using Cysharp.Threading.Tasks;
+	using R3;
 	using Sirenix.OdinInspector;
 	using UnityEngine;
 	using Random = UnityEngine.Random;
@@ -13,13 +16,13 @@ namespace Generation
 		private Grid _grid;
 
 		[SerializeField]
-		private GameObject _cellPrefab;
+		private Validator _validator;
 
 #region Debug
 
 		[BoxGroup("Debug")]
 		[SerializeField]
-		private Direction _currentDirection;
+		private CreatureDirection _currentCreatureDirection;
 
 		[BoxGroup("Debug")]
 		[SerializeField]
@@ -47,9 +50,15 @@ namespace Generation
 		[SerializeField]
 		private bool _isInverted;
 
+		[BoxGroup("Debug")]
+		[SerializeField]
+		private bool _canWaitNext;
+
 #endregion Debug
 
 		private bool _isNext;
+
+		public readonly List<Creature> Creatures = new List<Creature>();
 
 		public async UniTaskVoid Generate(Action<Node> cellGeneratedCallback)
 		{
@@ -58,12 +67,35 @@ namespace Generation
 			await CreateCreatures(_grid, node =>
 			{
 				_gridPosition = node.Coord;
-				_currentDirection = node.Creature.Direction;
+				_currentCreatureDirection = node.Creature.Direction.Value;
 
 				cellGeneratedCallback?.Invoke(node);
 			});
 			
-			//new Validator(true).Fix(_grid);
+			foreach (var node in _grid.Nodes.Values)
+			{
+				if (node == null) continue;
+
+				node.NeighborsEditor = node.Neighbors
+					.Select(kvp =>
+					{
+						return new Node.Data
+						{
+							ID = kvp.Value?.Creature.ID ?? -1,
+							_creatureDirection = kvp.Key,
+						};
+					})
+					.ToArray();
+
+				node.ID = node.Creature.ID;
+			}
+
+			await _validator.Validate(_grid);
+		}
+
+		private void OnDestroy()
+		{
+			Creatures.ForEach(c => c.Dispose());
 		}
 
 		[Button]
@@ -74,25 +106,34 @@ namespace Generation
 
 		private async UniTask CreateCreatures(Grid grid, Action<Node> creatureCreatedCallback)
 		{
+			int id = 0;
+
 			while (grid.TryGetNearestEmpty(out Node node))
 			{
-				await UniTask.WaitUntil(() => _isNext);
+				if (_canWaitNext)
+				{
+					await UniTask.WaitUntil(() => _isNext);
+					_isNext = false;
+				}
 
-				_isNext = false;
 				_isChangeSize = false;
 
 				Size size = (Size)Random.Range(1, 3);
-				Direction direction = (Direction)Random.Range(0, 4);
+				CreatureDirection creatureDirection = (CreatureDirection)Random.Range(0, 4);
 
 				Creature currentCreature = new()
 				{
+					ID = id++,
 					Size = size,
-					Direction = direction,
 					UsedCells = new((int)size)
 					{
 						node
 					},
 				};
+				
+				Creatures.Add(currentCreature);
+
+				currentCreature.Direction.Value = creatureDirection;
 
 				node.Creature = currentCreature;
 
@@ -101,7 +142,7 @@ namespace Generation
 
 				if (size == Size.One)
 				{
-					currentCreature.OriginNode = GetOrigin(node, currentCreature.Direction, currentCreature);
+					currentCreature.UpdateOrigin(node);
 					creatureCreatedCallback?.Invoke(node);
 
 					continue;
@@ -109,24 +150,25 @@ namespace Generation
 
 				Node rootNode = node;
 				Node currentNode = rootNode;
-				Direction currentDirection = currentNode.CreatureDirection;
+				CreatureDirection currentCreatureDirection = currentNode.CreatureDirection;
 				int currentSize = 1;
 				_isInverted = false;
 
 				for (int i = 0; i < (int)size - 1; i++)
 				{
-					Node targetNode = currentNode.Neighbors[currentDirection];
+					Node targetNode = currentNode.Neighbors[currentCreatureDirection];
 
 					if (targetNode != null && targetNode.Creature == null)
 					{
 						targetNode.Creature = rootNode.Creature;
+						
 						targetNode.CreatureUsedCells.Add(targetNode);
 						currentNode = targetNode;
 						currentSize++;
 					}
 					else if (_isInverted == false)
 					{
-						currentDirection = currentCreature.InvertDirection(currentDirection);
+						currentCreatureDirection = currentCreature.InvertDirection(currentCreatureDirection);
 						currentNode = rootNode;
 						_isInverted = true;
 						i--;
@@ -144,21 +186,9 @@ namespace Generation
 					node.Creature.Size = (Size)currentSize;
 				}
 
-				currentCreature.OriginNode = GetOrigin(node, currentCreature.Direction, currentCreature);
-				creatureCreatedCallback?.Invoke(currentCreature.OriginNode);
+				currentCreature.UpdateOrigin(node);
+				creatureCreatedCallback?.Invoke(currentCreature.OriginNode.Value);
 			}
-		}
-
-		private Node GetOrigin(Node node, Direction direction, Creature creature)
-		{
-			Node neighborNode = node.Neighbors[direction];
-
-			if (neighborNode != null && neighborNode.Creature == creature)
-			{
-				return GetOrigin(neighborNode, direction, creature);
-			}
-
-			return node;
 		}
 	}
 }

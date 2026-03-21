@@ -3,60 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using Generation;
 #region Validation
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+
 #endregion Validation
 using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class Spawner : MonoBehaviour
-    {
-        [SerializeField]
-        private Generator _generator;
+	using R3;
 
-        [SerializeField]
-        private Data[] _data;
+	public class Spawner : MonoBehaviour
+	{
+		[SerializeField]
+		private Generator _generator;
 
-        private Dictionary<Size, GameObject> _prefabs;
+		[SerializeField]
+		private Data[] _data;
 
-        #region Validation
+		private Dictionary<Size, GameObject> _prefabs;
+
+#region Validation
+
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (_generator == null)
-            {
-                _generator = FindObjectOfType<Generator>();
-                EditorUtility.SetDirty(this);
-            }
-        }
+		private void OnValidate()
+		{
+			if (_generator == null)
+			{
+				_generator = FindObjectOfType<Generator>();
+				EditorUtility.SetDirty(this);
+			}
+		}
 #endif
-        #endregion Validation
 
-        private void Start()
-        {
-            _prefabs ??= _data.ToDictionary(d => d.Size, d => d.Prefab);
+#endregion Validation
 
-            _generator.Generate(cell =>
-            {
-                GameObject prefab = _prefabs[cell.Creature.Size];
-                Instantiate(prefab, cell.Position, GetRotation(cell.Creature.Direction));
-            });
-        }
+		private void Start()
+		{
+			_prefabs ??= _data.ToDictionary(d => d.Size, d => d.Prefab);
 
-        private Quaternion GetRotation(Direction direction)
-        {
-            const int Rotation = 90;
+			_generator.Generate(originNode =>
+			{
+				GameObject prefab = _prefabs[originNode.Creature.Size];
+				var instance = Instantiate(prefab);
 
-            return Quaternion.Euler(new Vector3(0, Rotation * (int)direction, 0));
-        }
+				instance.GetComponentInChildren<CreatureView>().Init(originNode.Creature);
+			}).Forget();
+		}
 
-        [Serializable]
-        private struct Data
-        {
-            public Size Size;
-            public GameObject Prefab;
-        }
-    }
+		[Serializable]
+		private struct Data
+		{
+			public Size Size;
+			public GameObject Prefab;
+		}
+	}
 }
