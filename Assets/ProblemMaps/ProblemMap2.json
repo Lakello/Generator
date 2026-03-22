@@ -1,0 +1,354 @@
+{
+    "gridSize": {
+        "x": 5,
+        "y": 5
+    },
+    "cellSize": {
+        "x": 1.0,
+        "y": 1.0
+    },
+    "gridSpacing": {
+        "x": 1.0,
+        "y": 1.0
+    },
+    "origin": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "creatures": [
+        {
+            "id": 0,
+            "size": 1,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            "color": {
+                "r": 1.0,
+                "g": 0.9215686321258545,
+                "b": 0.01568627543747425,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 1,
+            "size": 2,
+            "direction": 2,
+            "occupiedCells": [
+                {
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 2,
+            "size": 2,
+            "direction": 2,
+            "occupiedCells": [
+                {
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "x": 0,
+                    "y": 4
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 3,
+            "size": 1,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 1,
+                    "y": 0
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 4,
+            "size": 2,
+            "direction": 3,
+            "occupiedCells": [
+                {
+                    "x": 1,
+                    "y": 1
+                },
+                {
+                    "x": 2,
+                    "y": 1
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 5,
+            "size": 1,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 1,
+                    "y": 2
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 6,
+            "size": 2,
+            "direction": 2,
+            "occupiedCells": [
+                {
+                    "x": 1,
+                    "y": 3
+                },
+                {
+                    "x": 1,
+                    "y": 4
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 7,
+            "size": 1,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 2,
+                    "y": 0
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 8,
+            "size": 1,
+            "direction": 1,
+            "occupiedCells": [
+                {
+                    "x": 2,
+                    "y": 2
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 9,
+            "size": 1,
+            "direction": 3,
+            "occupiedCells": [
+                {
+                    "x": 2,
+                    "y": 3
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 10,
+            "size": 1,
+            "direction": 1,
+            "occupiedCells": [
+                {
+                    "x": 2,
+                    "y": 4
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 11,
+            "size": 2,
+            "direction": 1,
+            "occupiedCells": [
+                {
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "x": 4,
+                    "y": 0
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 12,
+            "size": 1,
+            "direction": 1,
+            "occupiedCells": [
+                {
+                    "x": 3,
+                    "y": 1
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 13,
+            "size": 2,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 3,
+                    "y": 2
+                },
+                {
+                    "x": 3,
+                    "y": 3
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 14,
+            "size": 1,
+            "direction": 2,
+            "occupiedCells": [
+                {
+                    "x": 3,
+                    "y": 4
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 15,
+            "size": 1,
+            "direction": 3,
+            "occupiedCells": [
+                {
+                    "x": 4,
+                    "y": 1
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 16,
+            "size": 2,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 4,
+                    "y": 2
+                },
+                {
+                    "x": 4,
+                    "y": 3
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        },
+        {
+            "id": 17,
+            "size": 1,
+            "direction": 0,
+            "occupiedCells": [
+                {
+                    "x": 4,
+                    "y": 4
+                }
+            ],
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 1.0
+            }
+        }
+    ]
+}

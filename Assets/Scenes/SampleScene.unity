@@ -378,6 +378,9 @@ MonoBehaviour:
   _invertedGridPosition: {x: 0, y: 0}
   _isInverted: 0
   _canWaitNext: 0
+  _useJsonLoad: 0
+  _saveFileName: ProblemMap1.json
+  _jsonFileToLoad: {fileID: 4900000, guid: db3e6e701035b5240ac1138fc39d40e2, type: 3}
 --- !u!4 &532649066
 Transform:
   m_ObjectHideFlags: 0
@@ -1842,6 +1845,7 @@ MonoBehaviour:
     Prefab: {fileID: 548083111}
   - Size: 3
     Prefab: {fileID: 1582435664}
+  _useJsonLoad: 1
 --- !u!4 &2021949793
 Transform:
   m_ObjectHideFlags: 0
