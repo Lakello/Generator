@@ -38,6 +38,11 @@ namespace Generation
             _disposable.Dispose();
         }
 
+        public void SetDirection(CreatureDirection dir)
+        {
+            Direction.Value = dir;
+        }
+        
         public void InvertDirection()
         {
             Direction.Value = InvertDirection(Direction.Value);
@@ -63,6 +68,7 @@ namespace Generation
             }
             
             OriginNode.Value = GetOrigin(node);
+            OriginNode.ForceNotify();
             
             return;
             

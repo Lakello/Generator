@@ -2,6 +2,7 @@ namespace Generation
 {
 	using Assets.Scripts;
 	using R3;
+	using Sirenix.OdinInspector;
 	using TMPro;
 	using UnityEngine;
 
@@ -19,6 +20,12 @@ namespace Generation
 		private void OnDestroy()
 		{
 			_disposable?.Dispose();
+		}
+
+		[Button]
+		private void SetDirection(CreatureDirection dir)
+		{
+			_creature?.SetDirection(dir);
 		}
 
 		public void Init(Creature creature)
