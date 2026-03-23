@@ -20,7 +20,12 @@ namespace Generation
 		
 		public Dictionary<Vector2Int, Node> Nodes { get; } = new();
 
-		public void Generate()
+        public Vector2Int GridSize => _gridSize;
+        public Vector2 CellSize => _cellSize;
+        public Vector2 GridSpacing => _gridSpacing;
+        public Vector2 Origin => _origin;
+
+        public void Generate()
 		{
 			FillGrid(_gridSize);
 			AttachNeighbors(_gridSize);

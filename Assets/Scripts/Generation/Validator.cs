@@ -24,8 +24,14 @@
 			_isNext = true;
 		}
 
-		public async UniTask Validate(Grid grid)
+		public async UniTask Validate(Grid grid, bool? canWaitNext = null)
 		{
+			if(canWaitNext is not null)
+			{
+				_canWaitNext = canWaitNext.Value;
+
+            }
+
 			Dictionary<Creature, bool> allCreatures = new();
 
 			foreach (var node in grid.Nodes.Values)
