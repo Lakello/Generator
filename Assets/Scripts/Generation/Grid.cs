@@ -20,10 +20,10 @@ namespace Generation
 		
 		public Dictionary<Vector2Int, Node> Nodes { get; } = new();
 
-        public Vector2Int GetGridSize() => _gridSize;
-        public Vector2 GetCellSize() => _cellSize;
-        public Vector2 GetGridSpacing() => _gridSpacing;
-        public Vector2 GetOrigin() => _origin;
+        public Vector2Int GridSize => _gridSize;
+        public Vector2 CellSize => _cellSize;
+        public Vector2 GridSpacing => _gridSpacing;
+        public Vector2 Origin => _origin;
 
         public void Generate()
 		{

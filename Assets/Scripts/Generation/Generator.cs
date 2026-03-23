@@ -57,21 +57,28 @@ namespace Generation
 
         #endregion Debug
 
-        [BoxGroup("JSON Save and Load")]
         [SerializeField]
-        private string _saveFileName = "map_save.json";
-
-        [BoxGroup("JSON Save and Load")]
-        [SerializeField]
-        private TextAsset _jsonFileToLoad;
+        private MapLoader _mapLoader = new MapLoader();
+       
 
         private bool _isNext;
 
         public readonly List<Creature> Creatures = new List<Creature>();
 
+        //private void OnEnable()
+        //{
+        //        _mapLoader.Saving += SaveMap;
+        //}
+
+        //private void OnDisable()
+        //{
+        //        _mapLoader.Saving -= SaveMap;
+        //}
+
+
         public async UniTaskVoid Generate(Action<Node> cellGeneratedCallback, bool loadFromJson)
         {
-            if (loadFromJson && await TryLoadFromJson(cellGeneratedCallback))
+            if (loadFromJson && (_mapLoader is null == false) && await _mapLoader.TryLoadFromJson(cellGeneratedCallback))
             {
                 Debug.Log("Карта загружена из JSON");
                 return;
@@ -80,129 +87,7 @@ namespace Generation
             await GenerateNewMap(cellGeneratedCallback);
         }
 
-        private void SetupGridFromSave(SaveData saveData)
-        {
-            var gridType = _grid.GetType();
-
-            var gridSizeField = gridType.GetField("_gridSize",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            var cellSizeField = gridType.GetField("_cellSize",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            var gridSpacingField = gridType.GetField("_gridSpacing",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            var originField = gridType.GetField("_origin",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            if (gridSizeField != null) 
-                gridSizeField.SetValue(_grid, saveData.gridSize);
-
-            if (cellSizeField != null) 
-                cellSizeField.SetValue(_grid, saveData.cellSize);
-
-            if (gridSpacingField != null) 
-                gridSpacingField.SetValue(_grid, saveData.gridSpacing);
-
-            if (originField != null) 
-                originField.SetValue(_grid, saveData.origin);
-
-            _grid.Generate();
-        }
-
-        private async UniTask LoadFromSaveData(SaveData saveData, Action<Node> cellGeneratedCallback)
-        {
-            Creatures.Clear();
-
-            SetupGridFromSave(saveData);
-
-            var creaturesDict = new Dictionary<int, Creature>();
-
-            foreach (var savedCreature in saveData.creatures)
-            {
-                var creature = new Creature
-                {
-                    ID = savedCreature.id,
-                    Size = savedCreature.size,
-                    UsedCells = new List<Node>()
-                };
-
-                creature.Direction.Value = savedCreature.direction;
-                creature.CurrentColor.Value = savedCreature.color;
-
-                Creatures.Add(creature);
-                creaturesDict[creature.ID] = creature;
-            }
-
-            foreach (var savedCreature in saveData.creatures)
-            {
-                var creature = creaturesDict[savedCreature.id];
-
-                foreach (var coord in savedCreature.occupiedCells)
-                {
-                    if (_grid.Nodes.TryGetValue(coord, out Node node))
-                    {
-                        node.Creature = creature;
-                        creature.UsedCells.Add(node);
-                    }
-                }
-            }
-
-            foreach (var creature in Creatures)
-            {
-                if (creature.UsedCells.Count > 0)
-                {
-                    creature.UpdateOrigin(creature.UsedCells[0]);
-                    cellGeneratedCallback?.Invoke(creature.OriginNode.Value);
-                }
-            }
-
-            foreach (var node in _grid.Nodes.Values)
-            {
-                if (node?.Creature != null)
-                {
-                    node.NeighborsEditor = node.Neighbors
-                        .Select(kvp => new Node.Data
-                        {
-                            ID = kvp.Value?.Creature.ID ?? -1,
-                            _creatureDirection = kvp.Key,
-                        })
-                        .ToArray();
-
-                    node.ID = node.Creature.ID;
-                }
-            }
-
-            await _validator.Validate(_grid);
-        }
-
-        private async UniTask<bool> TryLoadFromJson(Action<Node> cellGeneratedCallback)
-        {
-            if (_jsonFileToLoad == null)
-            {
-                Debug.Log("Нет JSON файла для загрузки");
-
-                return false;
-            }
-
-            Debug.Log($"Загрузка из: {_jsonFileToLoad.name}");
-
-            SaveData saveData = JsonUtility.FromJson<SaveData>(_jsonFileToLoad.text);
-
-            if (saveData == null)
-            {
-                Debug.LogError("Ошибка десериализации JSON файла");
-
-                return false;
-            }
-
-            await LoadFromSaveData(saveData, cellGeneratedCallback);
-
-            return true;
-        }
-
-        public async UniTask GenerateNewMap(Action<Node> cellGeneratedCallback) // Заменил UniTaskVoid на Unitask
+        public async UniTask GenerateNewMap(Action<Node> cellGeneratedCallback)
         {
             _grid.Generate();
             Creatures.Clear();
@@ -249,47 +134,9 @@ namespace Generation
         }
 
         [Button]
-        private void SaveToJson()
+        private void SaveMap()
         {
-            var saveData = new SaveData
-            {
-                gridSize = _grid.GetGridSize(),
-                cellSize = _grid.GetCellSize(),
-                gridSpacing = _grid.GetGridSpacing(),
-                origin = _grid.GetOrigin(),
-                creatures = new List<SavedCreature>()
-            };
-
-            foreach (var creature in Creatures)
-            {
-                var savedCreature = new SavedCreature
-                {
-                    id = creature.ID,
-                    size = creature.Size,
-                    direction = creature.Direction.Value,
-                    occupiedCells = new List<Vector2Int>(), //TODO удалить т.к. ячейки больше не нужны
-                    color = creature.CurrentColor.Value
-                };
-
-                // Сохраняем координаты занятых ячеек
-                if (creature.UsedCells != null)
-                {
-                    foreach (var cell in creature.UsedCells)
-                        savedCreature.occupiedCells.Add(cell.Coord);
-                }
-                else
-                {
-                    savedCreature.occupiedCells.Add(creature.OriginNode.Value.Coord);
-                }
-
-                saveData.creatures.Add(savedCreature);
-            }
-
-            string json = JsonUtility.ToJson(saveData, true);
-            string fullPath = Path.Combine(Application.dataPath, _saveFileName);
-            File.WriteAllText(fullPath, json);
-
-            Debug.Log($"Сохранено в: {fullPath}");
+            _mapLoader.SaveToJson(_grid, Creatures);
         }
 
         private async UniTask CreateCreatures(Grid grid, Action<Node> creatureCreatedCallback)
