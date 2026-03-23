@@ -65,17 +65,6 @@ namespace Generation
 
         public readonly List<Creature> Creatures = new List<Creature>();
 
-        //private void OnEnable()
-        //{
-        //        _mapLoader.Saving += SaveMap;
-        //}
-
-        //private void OnDisable()
-        //{
-        //        _mapLoader.Saving -= SaveMap;
-        //}
-
-
         public async UniTaskVoid Generate(Action<Node> cellGeneratedCallback, bool loadFromJson)
         {
             if (loadFromJson && (_mapLoader is null == false) && await _mapLoader.TryLoadFromJson(cellGeneratedCallback))

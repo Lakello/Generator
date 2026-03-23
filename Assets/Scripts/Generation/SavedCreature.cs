@@ -7,9 +7,9 @@ using Assets.Scripts;
 [Serializable]
 public class SavedCreature
 {
-    public int id;
-    public Size size;
-    public CreatureDirection direction;
-    public List<Vector2Int> occupiedCells;
-    public Color color;
+    public int Id;
+    public Size Size;
+    public CreatureDirection Direction;
+    public List<Vector2Int> OccupiedCells;
+    public Color Color;
 }

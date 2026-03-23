@@ -7,9 +7,9 @@ using Assets.Scripts;
 [Serializable]
 public class SaveData
 {
-    public Vector2Int gridSize;
-    public Vector2 cellSize;
-    public Vector2 gridSpacing;
-    public Vector2 origin;
-    public List<SavedCreature> creatures;
+    public Vector2Int GridSize;
+    public Vector2 CellSize;
+    public Vector2 GridSpacing;
+    public Vector2 Oorigin;
+    public List<SavedCreature> Creatures;
 }

@@ -44,36 +44,35 @@ namespace Generation
 
             SaveData saveData = new SaveData
             {
-                gridSize = grid.GridSize,
-                cellSize = grid.CellSize,
-                gridSpacing = grid.GridSpacing,
-                origin = grid.Origin,
-                creatures = new List<SavedCreature>()
+                GridSize = grid.GridSize,
+                CellSize = grid.CellSize,
+                GridSpacing = grid.GridSpacing,
+                Oorigin = grid.Origin,
+                Creatures = new List<SavedCreature>()
             };
 
             foreach (var creature in creatures)
             {
                 var savedCreature = new SavedCreature
                 {
-                    id = creature.ID,
-                    size = creature.Size,
-                    direction = creature.Direction.Value,
-                    color = creature.CurrentColor.Value,
-                    occupiedCells = new List<Vector2Int>(),
+                    Id = creature.ID,
+                    Size = creature.Size,
+                    Direction = creature.Direction.Value,
+                    Color = creature.CurrentColor.Value,
+                    OccupiedCells = new List<Vector2Int>(),
                 };
 
-                // Сохраняем координаты занятых ячеек
                 if (creature.UsedCells != null)
                 {
                     foreach (Node cell in creature.UsedCells)
-                        savedCreature.occupiedCells.Add(cell.Coord);
+                        savedCreature.OccupiedCells.Add(cell.Coord);
                 }
                 else
                 {
-                    savedCreature.occupiedCells.Add(creature.OriginNode.Value.Coord);
+                    savedCreature.OccupiedCells.Add(creature.OriginNode.Value.Coord);
                 }
 
-                saveData.creatures.Add(savedCreature);
+                saveData.Creatures.Add(savedCreature);
             }
 
             string json = UnityEngine.JsonUtility.ToJson(saveData, true);
@@ -100,16 +99,16 @@ namespace Generation
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             if (gridSizeField != null)
-                gridSizeField.SetValue(_grid, saveData.gridSize);
+                gridSizeField.SetValue(_grid, saveData.GridSize);
 
             if (cellSizeField != null)
-                cellSizeField.SetValue(_grid, saveData.cellSize);
+                cellSizeField.SetValue(_grid, saveData.CellSize);
 
             if (gridSpacingField != null)
-                gridSpacingField.SetValue(_grid, saveData.gridSpacing);
+                gridSpacingField.SetValue(_grid, saveData.GridSpacing);
 
             if (originField != null)
-                originField.SetValue(_grid, saveData.origin);
+                originField.SetValue(_grid, saveData.Oorigin);
 
             _grid.Generate();
         }
@@ -147,27 +146,27 @@ namespace Generation
 
             var creaturesDict = new Dictionary<int, Creature>();
 
-            foreach (var savedCreature in saveData.creatures)
+            foreach (var savedCreature in saveData.Creatures)
             {
                 var creature = new Creature
                 {
-                    ID = savedCreature.id,
-                    Size = savedCreature.size,
+                    ID = savedCreature.Id,
+                    Size = savedCreature.Size,
                     UsedCells = new List<Node>()
                 };
 
-                creature.Direction.Value = savedCreature.direction;
-                creature.CurrentColor.Value = savedCreature.color;
+                creature.Direction.Value = savedCreature.Direction;
+                creature.CurrentColor.Value = savedCreature.Color;
 
                 Creatures.Add(creature);
                 creaturesDict[creature.ID] = creature;
             }
 
-            foreach (var savedCreature in saveData.creatures)
+            foreach (var savedCreature in saveData.Creatures)
             {
-                var creature = creaturesDict[savedCreature.id];
+                var creature = creaturesDict[savedCreature.Id];
 
-                foreach (var coord in savedCreature.occupiedCells)
+                foreach (var coord in savedCreature.OccupiedCells)
                 {
                     if (_grid.Nodes.TryGetValue(coord, out Node node))
                     {
