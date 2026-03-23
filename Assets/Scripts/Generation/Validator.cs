@@ -82,8 +82,7 @@
 					{
 						neighborNode.Creature.InvertDirection();
 
-						var isChecked = FillChain(neighborNode.Creature);
-						Debug.LogError($"{isChecked}");
+						await FillChain(neighborNode.Creature);
 					}
 				}
 
@@ -118,6 +117,7 @@
 					}
 
 					var invertedDirection = targetNode.Creature.InvertDirection(targetNode.CreatureDirection);
+					
 					if (invertedDirection == root.Direction.Value)
 					{
 						targetNode.Creature.InvertDirection();
